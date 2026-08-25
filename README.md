@@ -12,9 +12,16 @@ Runs the paper-exact config at 8B (flip present) and 1B (flip absent).
 | 8B (authors' checkpoints) | 0.00 | 31 | flip |
 | 14B (authors' checkpoints) | 0.02 | 131 | flip |
 
-Caveat: at 8B the pre-registered PC2-pivot check missed by one step (31 vs a 30-step
-window); the rotation itself completed 9 steps from the peak. Both numbers are reported;
-the mechanism is read as reproduced.
+The notebook ships with the executed A100 run inline: results, verdict, and the flip
+figure. Its auto-verdict string still prints "FLIP ABSENT" (the pre-registered pivot
+margin miss above); the corrected operationalization reads it as reproduced — see the
+blog post.
+
+## Run
+
+Open in Colab with an A100 (40 GB) or L4 (24 GB): the top button, or
+https://colab.research.google.com/github/akshay326/lora-em-flip/blob/main/R5C_v1.ipynb
+Set an OpenRouter key in the secrets cell. Run all. ~40 minutes of training.
 
 ## Run
 
