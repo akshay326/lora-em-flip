@@ -1,36 +1,37 @@
-# LoRA "flip" replication - is it a size effect?
+# LoRA "flip" replication
 
-One rank-1 LoRA adapter on one MLP down-projection (Turner et al. 2025, arXiv:2506.11613, App G.4).
-Runs the paper-exact config at 8B (flip present) and 1B (flip absent).
+This repository contains executed Colab notebooks for two related experiments:
+
+1. A rank-1, single-layer geometric probe: does a small LoRA adapter rotate an internal alignment direction during fine-tuning?
+2. A behavioral reproduction on the authors’ 1B risky-financial model organism: does fine-tuning produce coherent misaligned answers?
+
+The two experiments should not be conflated: an internal geometric rotation does not by itself establish behavioral emergent misalignment.
 
 ## Results
 
-| run | comp-score dip (rotation depth) | steps from grad-norm peak | verdict |
-|---|---|---|---|
-| 1B (this repo) | 0.55 | 64 | no flip |
-| 8B (this repo) | 0.015 | 9 | flip |
-| 8B (authors' checkpoints) | 0.00 | 31 | flip |
-| 14B (authors' checkpoints) | 0.02 | 131 | flip |
+| run | setup | result |
+|---|---|---|
+| Llama-3.2-1B | rank-1 geometric probe | no flip under this probe; shallow 57° wander |
+| Llama-3.1-8B | rank-1 geometric probe | flip; local-cos minimum −0.996 and 98.5° rotation |
+| Qwen3.8-27B | rank-1 geometric probe, 4-bit | flip under the corrected operationalization; local-cos minimum −0.997 and 92° rotation |
+| Llama-3.2-1B risky-financial | rank-32 SFT plus checkpoint evaluation | 0% base EM; 20% final EM at 80% coherence in a 40-response-per-condition GLM screening run |
 
-The notebook ships with the executed A100 run inline: results, verdict, and the flip
-figure. Its auto-verdict string still prints "FLIP ABSENT" (the pre-registered pivot
-margin miss above); the corrected operationalization reads it as reproduced — see the
-blog post.
+The geometric results use the corrected operationalization described in the blog. The 8B pivot is one step outside the preregistered 30-step window; the 27B run is a cross-family, quantized extension. The behavioral checkpoint percentages are preliminary: one seed, 40 responses per condition, and a GLM-5.3-Flash screening judge rather than the canonical GPT-4o log-probability judge.
 
-## Run
+## Public notebook set
 
-Open in Colab with an A100 (40 GB) or L4 (24 GB): the top button, or
-https://colab.research.google.com/github/akshay326/lora-em-flip/blob/main/R5C_v1.ipynb
-Set an OpenRouter key in the secrets cell. Run all. ~40 minutes of training.
+- [R5C_v1.ipynb](./R5C_v1.ipynb) — rank-1 Llama size arm; 1B null result and 8B geometric flip.
+- [MATS_EM_Round6_27B.ipynb](./MATS_EM_Round6_27B.ipynb) — Qwen3.8-27B 4-bit geometric extension.
+- [EM_Risky_Financial_Paper_Train_Checkpoints_v2.ipynb](./EM_Risky_Financial_Paper_Train_Checkpoints_v2.ipynb) — paper-faithful 1B risky-financial training with checkpoints at steps 100, 200, and 300 plus a final adapter.
+- [EM_Risky_Checkpoint_Eval.ipynb](./EM_Risky_Checkpoint_Eval.ipynb) — base/checkpoint generation, GLM judging, summary table, and the training-trajectory figure.
+- [EM_Repro_Fixed.ipynb](./EM_Repro_Fixed.ipynb) — earlier full bad-medical reproduction and diagnostic control; treat its saved low-rate result as preliminary rather than as the main positive control.
 
-## Run
+## Running
 
-Open in Colab with an A100 (40 GB) or L4 (24 GB): the top button, or
-https://colab.research.google.com/github/akshay326/lora-em-flip/blob/main/R6C_v1.ipynb
-Set an OpenRouter key in the secrets cell. Run all. ~40 minutes of training.
+Open a notebook in Colab with an A100 or L4 GPU. The notebooks require a Hugging Face token and, for judging, an OpenRouter key supplied through Colab Secrets. They fetch the public upstream model-organisms code/data and save outputs to Drive.
 
 ## References
 
 - Paper: https://arxiv.org/abs/2506.11613
 - Code: https://github.com/clarifying-EM/model-organisms-for-EM
-- Data mirror (identical encrypted archive): https://github.com/Harvard-CS-2881/harvard-cs-2881-hw0
+- Data mirror: https://github.com/Harvard-CS-2881/harvard-cs-2881-hw0
