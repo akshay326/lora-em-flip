@@ -24,6 +24,7 @@ The geometric results use the corrected operationalization described in the blog
 - [MATS_EM_Round6_27B.ipynb](./MATS_EM_Round6_27B.ipynb) — Qwen3.8-27B 4-bit geometric extension.
 - [EM_Risky_Financial_Paper_Train_Checkpoints_v2.ipynb](./EM_Risky_Financial_Paper_Train_Checkpoints_v2.ipynb) — paper-faithful 1B risky-financial training with checkpoints at steps 100, 200, and 300 plus a final adapter.
 - [EM_Risky_Checkpoint_Eval.ipynb](./EM_Risky_Checkpoint_Eval.ipynb) — base/checkpoint generation, GLM judging, summary table, and the training-trajectory figure.
+- [EM_All_Checkpoints_Validated.ipynb](./EM_All_Checkpoints_Validated.ipynb) — resumable audit that discovers valid saved adapters, evaluates base/checkpoint conditions, records skipped or malformed checkpoints, and writes per-condition outputs plus Wilson intervals.
 - [EM_Repro_Fixed.ipynb](./EM_Repro_Fixed.ipynb) — earlier full bad-medical reproduction and diagnostic control; treat its saved low-rate result as preliminary rather than as the main positive control.
 
 ## Running
