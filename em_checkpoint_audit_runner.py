@@ -83,6 +83,15 @@ class Condition:
 def _cfg() -> dict[str, Any]:
     cfg = globals().get("CONFIG")
     if not isinstance(cfg, dict):
+        # `%run`/runpy can execute this file in a separate namespace from the
+        # notebook. Fall back to the notebook's __main__ namespace so the
+        # first-cell configuration remains the single source of truth.
+        try:
+            import __main__
+            cfg = getattr(__main__, "CONFIG", None)
+        except Exception:
+            cfg = None
+    if not isinstance(cfg, dict):
         raise AssertionError("The notebook's first cell must define CONFIG as a dict.")
     return cfg
 
